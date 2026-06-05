@@ -60,6 +60,8 @@ function ContextMenuSubTrigger({
   ...props
 }: React.ComponentProps<typeof ContextMenuPrimitive.SubTrigger> & {
   inset?: boolean;
+  className?: string;
+  children?: React.ReactNode;
 }) {
   return (
     <ContextMenuPrimitive.SubTrigger
@@ -119,6 +121,7 @@ function ContextMenuItem({
 }: React.ComponentProps<typeof ContextMenuPrimitive.Item> & {
   inset?: boolean;
   variant?: "default" | "destructive";
+  className?: string;
 }) {
   return (
     <ContextMenuPrimitive.Item
@@ -139,7 +142,11 @@ function ContextMenuCheckboxItem({
   children,
   checked,
   ...props
-}: React.ComponentProps<typeof ContextMenuPrimitive.CheckboxItem>) {
+}: React.ComponentProps<typeof ContextMenuPrimitive.CheckboxItem> & {
+  className?: string;
+  children?: React.ReactNode;
+  checked?: boolean;
+}) {
   return (
     <ContextMenuPrimitive.CheckboxItem
       data-slot="context-menu-checkbox-item"
@@ -164,7 +171,10 @@ function ContextMenuRadioItem({
   className,
   children,
   ...props
-}: React.ComponentProps<typeof ContextMenuPrimitive.RadioItem>) {
+}: React.ComponentProps<typeof ContextMenuPrimitive.RadioItem> & {
+  className?: string;
+  children?: React.ReactNode;
+}) {
   return (
     <ContextMenuPrimitive.RadioItem
       data-slot="context-menu-radio-item"
@@ -190,6 +200,7 @@ function ContextMenuLabel({
   ...props
 }: React.ComponentProps<typeof ContextMenuPrimitive.Label> & {
   inset?: boolean;
+  className?: string;
 }) {
   return (
     <ContextMenuPrimitive.Label
@@ -207,7 +218,9 @@ function ContextMenuLabel({
 function ContextMenuSeparator({
   className,
   ...props
-}: React.ComponentProps<typeof ContextMenuPrimitive.Separator>) {
+}: React.ComponentProps<typeof ContextMenuPrimitive.Separator> & {
+  className?: string;
+}) {
   return (
     <ContextMenuPrimitive.Separator
       data-slot="context-menu-separator"

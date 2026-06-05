@@ -1,5 +1,5 @@
 import { Box } from '@mui/material';
-import { motion, useMotionValue, useTransform } from 'motion/react';
+import { motion } from 'motion/react';
 import { useState, useEffect, useRef } from 'react';
 
 const emojiData = [
@@ -88,10 +88,6 @@ function InteractiveEmoji({ emoji, top, left, size, mousePos, index }: any) {
 
   useEffect(() => {
     if (emojiRef.current) {
-      const rect = emojiRef.current.getBoundingClientRect();
-      const emojiX = rect.left + rect.width / 2;
-      const emojiY = rect.top + rect.height / 2;
-
       const distance = Math.sqrt(
         Math.pow(mousePos.x - (left * window.innerWidth / 100), 2) +
         Math.pow(mousePos.y - (top * window.innerHeight / 100), 2)

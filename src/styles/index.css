@@ -1,6 +1,5 @@
-@import './fonts.css';
-@import './tailwind.css';
 @import './theme.css';
+@import './tailwind.css';
 
 /* Reveal on scroll animation */
 .reveal {
