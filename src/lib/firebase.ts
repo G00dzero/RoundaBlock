@@ -2,15 +2,27 @@ import { initializeApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
 import { getDatabase } from 'firebase/database';
 
+const requiredFirebaseEnv = {
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  databaseURL: import.meta.env.VITE_FIREBASE_DATABASE_URL,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID,
+};
+
+const missingFirebaseEnv = Object.entries(requiredFirebaseEnv)
+  .filter(([, value]) => !value)
+  .map(([key]) => key);
+
+if (missingFirebaseEnv.length > 0) {
+  throw new Error(`Missing Firebase environment variables: ${missingFirebaseEnv.join(', ')}`);
+}
+
 const firebaseConfig = {
-  apiKey: 'AIzaSyAfUv0m9P29mY0Zj4dq6VAQc42DOLDXFAQ',
-  authDomain: 'roundablock-1.firebaseapp.com',
-  databaseURL: 'https://roundablock-1-default-rtdb.europe-west1.firebasedatabase.app',
-  projectId: 'roundablock-1',
-  storageBucket: 'roundablock-1.firebasestorage.app',
-  messagingSenderId: '1018599446374',
-  appId: '1:1018599446374:web:60c3c25e1521a30e875aa7',
-  measurementId: 'G-L443VQFSEG',
+  ...requiredFirebaseEnv,
+  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID,
 };
 
 export const app = initializeApp(firebaseConfig);

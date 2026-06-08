@@ -12,6 +12,18 @@ dist
 dist-ssr
 *.local
 
+# Local environment files
+.env
+.env.*
+!.env.example
+
+# Tooling/runtime output
+.vite
+.turbo
+coverage
+vite-dev.log
+vite-dev.err.log
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
