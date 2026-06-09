@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import type { CSSProperties } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { onAuthStateChanged, signOut } from 'firebase/auth';
 import type { User } from 'firebase/auth';
 import { auth } from '../lib/firebase';
@@ -12,16 +12,39 @@ type DashboardProps = {
 
 const planningCards = [
   {
-    title: 'Start a plan',
+    title: 'Create plan',
     description: 'Create a new hangout, trip, dinner, or event and invite your people.',
   },
   {
-    title: 'Pick a time',
-    description: 'Collect everyone\'s availability before the group chat gets messy.',
+    title: 'View current plans',
+    description: 'See active plans, pending decisions, and what still needs a vote.',
   },
   {
-    title: 'Decide together',
-    description: 'Vote on places, food, dates, and details from one shared space.',
+    title: 'Plan history',
+    description: 'Look back at completed events and repeat the plans that worked.',
+  },
+  {
+    title: 'Live chat',
+    description: 'Keep the conversation beside the plan so nothing gets lost.',
+  },
+];
+
+const floatingNavItems = [
+  {
+    label: 'Create plan',
+    target: 'create-plan',
+  },
+  {
+    label: 'View plans',
+    target: 'current-plans',
+  },
+  {
+    label: 'History',
+    target: 'plan-history',
+  },
+  {
+    label: 'Live chat',
+    target: 'live-chat',
   },
 ];
 
@@ -42,28 +65,39 @@ export default function Dashboard({ darkMode }: DashboardProps) {
     navigate('/', { replace: true });
   };
 
+  const scrollToSection = (sectionId: string) => {
+    document.getElementById(sectionId)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
+
   const name = user?.displayName || user?.email?.split('@')[0] || 'there';
 
   return (
     <main style={pageStyle(darkMode)}>
       <FloatingIcons />
+      <nav style={floatingNavStyle(darkMode)} aria-label="Dashboard navigation">
+        {floatingNavItems.map((item) => (
+          <button key={item.target} type="button" onClick={() => scrollToSection(item.target)} style={floatingNavButtonStyle(darkMode)}>
+            {item.label}
+          </button>
+        ))}
+      </nav>
       <section style={shellStyle}>
         <nav style={navStyle}>
-          <Link to="/" style={brandStyle(darkMode)}>RoundaBlock</Link>
+          <button type="button" onClick={() => scrollToSection('dashboard-home')} style={brandStyle(darkMode)}>RoundaBlock</button>
           <button type="button" onClick={handleSignOut} style={outlineButtonStyle(darkMode)}>
             Sign out
           </button>
         </nav>
 
-        <section style={heroStyle(darkMode)}>
+        <section id="dashboard-home" style={heroStyle(darkMode)}>
           <p style={eyebrowStyle}>Your planning hub</p>
           <h1 style={headlineStyle}>Welcome, {loading ? '...' : name}</h1>
           <p style={copyStyle(darkMode)}>
-            This is where your group plans will live. Start with a plan, invite friends, and keep the decisions in one place.
+            You are signed in. Start something new or jump back into the plans already moving.
           </p>
           <div style={actionsStyle}>
-            <button type="button" style={primaryButtonStyle}>Create a plan</button>
-            <Link to="/" style={secondaryLinkStyle(darkMode)}>Back to home</Link>
+            <button type="button" onClick={() => navigate('/create-plan')} style={primaryButtonStyle}>Create a plan</button>
+            <button type="button" onClick={() => scrollToSection('current-plans')} style={secondaryButtonStyle(darkMode)}>View current plans</button>
           </div>
         </section>
 
@@ -74,6 +108,48 @@ export default function Dashboard({ darkMode }: DashboardProps) {
               <p style={cardCopyStyle(darkMode)}>{card.description}</p>
             </article>
           ))}
+        </section>
+
+        <section id="create-plan" style={panelSectionStyle(darkMode)}>
+          <div>
+            <p style={eyebrowStyle}>Create plan</p>
+            <h2 style={sectionTitleStyle}>Start with the basics</h2>
+            <p style={copyStyle(darkMode)}>
+              Add the plan name, suggested dates, location ideas, and the friends you want involved.
+            </p>
+          </div>
+          <button type="button" onClick={() => navigate('/create-plan')} style={primaryButtonStyle}>New plan</button>
+        </section>
+
+        <section id="current-plans" style={panelSectionStyle(darkMode)}>
+          <div>
+            <p style={eyebrowStyle}>View current plans</p>
+            <h2 style={sectionTitleStyle}>Active plans will show here</h2>
+            <p style={copyStyle(darkMode)}>
+              Once plans are saved, this area can list open votes, pending invites, and next decisions.
+            </p>
+          </div>
+          <button type="button" style={secondaryButtonStyle(darkMode)}>View plans</button>
+        </section>
+
+        <section id="plan-history" style={panelSectionStyle(darkMode)}>
+          <div>
+            <p style={eyebrowStyle}>Plan history</p>
+            <h2 style={sectionTitleStyle}>Past plans, saved decisions</h2>
+            <p style={copyStyle(darkMode)}>
+              Completed events can live here so users can reuse dates, places, and invite lists.
+            </p>
+          </div>
+        </section>
+
+        <section id="live-chat" style={panelSectionStyle(darkMode)}>
+          <div>
+            <p style={eyebrowStyle}>Live chat</p>
+            <h2 style={sectionTitleStyle}>Chat beside the plan</h2>
+            <p style={copyStyle(darkMode)}>
+              A chat feed can be connected here later so every decision stays attached to the right plan.
+            </p>
+          </div>
         </section>
       </section>
     </main>
@@ -87,9 +163,9 @@ function pageStyle(darkMode: boolean): CSSProperties {
       ? 'linear-gradient(135deg, #020617, #111827 55%, #312e81)'
       : 'linear-gradient(135deg, #fff7ed, #f8fafc 55%, #e0f2fe)',
     color: darkMode ? 'white' : '#0f172a',
-    padding: '1.25rem',
+    padding: '1.25rem 1.25rem 7rem',
     position: 'relative',
-    overflow: 'hidden',
+    overflow: 'hidden auto',
   };
 }
 
@@ -110,10 +186,13 @@ const navStyle: CSSProperties = {
 
 function brandStyle(darkMode: boolean): CSSProperties {
   return {
+    border: 'none',
+    background: 'transparent',
     color: darkMode ? 'white' : '#0f172a',
+    cursor: 'pointer',
     fontWeight: 900,
     fontSize: '1.2rem',
-    textDecoration: 'none',
+    padding: 0,
   };
 }
 
@@ -172,11 +251,15 @@ const primaryButtonStyle: CSSProperties = {
   padding: '0.95rem 1.35rem',
 };
 
-function secondaryLinkStyle(darkMode: boolean): CSSProperties {
+function secondaryButtonStyle(darkMode: boolean): CSSProperties {
   return {
+    border: darkMode ? '1px solid rgba(253, 230, 138, 0.34)' : '1px solid rgba(180, 83, 9, 0.28)',
+    borderRadius: 999,
+    background: darkMode ? 'rgba(253, 230, 138, 0.1)' : 'rgba(255, 247, 237, 0.95)',
     color: darkMode ? '#fde68a' : '#b45309',
+    cursor: 'pointer',
     fontWeight: 800,
-    textDecoration: 'none',
+    padding: '0.9rem 1.25rem',
   };
 }
 
@@ -222,3 +305,63 @@ function cardCopyStyle(darkMode: boolean): CSSProperties {
     lineHeight: 1.6,
   };
 }
+
+function floatingNavStyle(darkMode: boolean): CSSProperties {
+  return {
+    position: 'fixed',
+    left: '50%',
+    bottom: '1rem',
+    transform: 'translateX(-50%)',
+    zIndex: 20,
+    width: 'min(760px, calc(100% - 1.5rem))',
+    display: 'grid',
+    gridTemplateColumns: 'repeat(4, minmax(0, 1fr))',
+    gap: '0.35rem',
+    padding: '0.45rem',
+    border: darkMode ? '1px solid rgba(148, 163, 184, 0.24)' : '1px solid rgba(15, 23, 42, 0.12)',
+    borderRadius: 999,
+    background: darkMode ? 'rgba(15, 23, 42, 0.9)' : 'rgba(255, 255, 255, 0.92)',
+    boxShadow: darkMode ? '0 18px 50px rgba(0, 0, 0, 0.36)' : '0 18px 50px rgba(15, 23, 42, 0.14)',
+    backdropFilter: 'blur(14px)',
+  };
+}
+
+function floatingNavButtonStyle(darkMode: boolean): CSSProperties {
+  return {
+    minHeight: 42,
+    border: 'none',
+    borderRadius: 999,
+    background: 'transparent',
+    color: darkMode ? '#e5e7eb' : '#334155',
+    cursor: 'pointer',
+    fontSize: '0.8rem',
+    fontWeight: 800,
+    padding: '0.45rem 0.55rem',
+    whiteSpace: 'nowrap',
+  };
+}
+
+function panelSectionStyle(darkMode: boolean): CSSProperties {
+  return {
+    scrollMarginTop: '1rem',
+    marginTop: '1rem',
+    minHeight: 220,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: '1.5rem',
+    flexWrap: 'wrap',
+    padding: 'clamp(1.5rem, 4vw, 2.5rem)',
+    borderRadius: 24,
+    border: darkMode ? '1px solid rgba(148, 163, 184, 0.2)' : '1px solid rgba(15, 23, 42, 0.08)',
+    background: darkMode ? 'rgba(15, 23, 42, 0.78)' : 'rgba(255, 255, 255, 0.8)',
+    boxShadow: darkMode ? '0 18px 50px rgba(0, 0, 0, 0.24)' : '0 18px 50px rgba(15, 23, 42, 0.08)',
+  };
+}
+
+const sectionTitleStyle: CSSProperties = {
+  margin: '0.55rem 0 0',
+  fontSize: 'clamp(1.5rem, 4vw, 2.4rem)',
+  lineHeight: 1.08,
+  letterSpacing: 0,
+};
