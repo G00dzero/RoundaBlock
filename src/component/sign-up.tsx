@@ -46,9 +46,8 @@ export default function SignUp({ darkMode }: SignUpProps) {
         createdAt: new Date().toISOString(),
       });
 
-      navigate('/signin', {
+      navigate('/dashboard', {
         replace: true,
-        state: { message: 'Account created successfully. Please sign in.' },
       });
     } catch (err) {
       setError(getAuthMessage(err));

@@ -1,5 +1,6 @@
 import { BrowserRouter, Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import Homepage from './component/Homepage';
+import Dashboard from './component/Dashboard';
 import SignIn from './component/sign-in';
 import SignUp from './component/sign-up';
 import Footer from './app/components/Footer';
@@ -31,6 +32,7 @@ function AppShell({ darkMode, setDarkMode }: { darkMode: boolean; setDarkMode: D
       <main style={{ flex: 1 }}>
         <Routes>
           <Route path="/" element={<Homepage darkMode={darkMode} setDarkMode={setDarkMode} />} />
+          <Route path="/dashboard" element={<Dashboard darkMode={darkMode} />} />
           <Route path="/signup" element={<SignUp darkMode={darkMode} />} />
           <Route path="/signin" element={<SignIn darkMode={darkMode} />} />
           <Route path="*" element={<Navigate to="/" replace />} />

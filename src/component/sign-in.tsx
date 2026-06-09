@@ -32,7 +32,7 @@ export default function SignIn({ darkMode }: SignInProps) {
 
     try {
       await signInWithEmailAndPassword(auth, email.trim(), password);
-      navigate('/');
+      navigate('/dashboard', { replace: true });
     } catch (err) {
       setError(getAuthMessage(err));
     } finally {
